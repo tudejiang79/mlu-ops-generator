@@ -147,6 +147,7 @@ message Node {
   optional YoloBoxParam yolo_box_param                = 4011;   // YoloBoxParam
   optional GenerateProposalsV2Param generate_proposals_v2_param = 5930;   // GenerateProposalsV2Param
   optional BallQueryParam  ball_query_param             = 4008;  // param
+  optional VoxelizationParam  voxelization_param        = 4012;  // Voxelizationparam
 }
 
 
@@ -291,4 +292,11 @@ message BallQueryParam  {
   optional float min_radius = 1 [default = 0.0];
   optional float max_radius = 2 [default = 1.0];
   optional int32   nsample  = 3 [default = 1];
+}
+
+// param to call mluOpVoxelization()
+message VoxelizationParam {
+  optional int32 max_points = 1 [default = 35];
+  optional int32 max_voxels = 2 [default = 20000];
+  optional int32 NDim       = 3 [default = 3];
 }
