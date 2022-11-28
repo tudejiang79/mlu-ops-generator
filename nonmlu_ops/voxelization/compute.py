@@ -20,6 +20,7 @@ class VoxelizationOp(OpTest):
         self.max_points = self.params_.get("max_points", 35)
         self.max_voxels = self.params_.get("max_voxels", 20000)
         self.NDim = self.params_.get("NDim", 3)
+        self.deterministic = self.params_.get("deterministic", True)
 
     def computeOutputShape(self):
         self.tensor_list_.getOutputTensor(0).setShape([self.num_points, self.max_points, self.num_features])
@@ -39,17 +40,19 @@ class VoxelizationOp(OpTest):
         voxel_size = torch.tensor(voxel_size_tensor.getDataNode().getData())
         coors_range = torch.tensor(coors_range_tensor.getDataNode().getData())
 
-        hard_voxelization =  Voxelization(
+        hard_voxelization = Voxelization(
             voxel_size.numpy().tolist(),
             coors_range.numpy().tolist(),
             self.max_points,
             self.max_voxels,
-            deterministic=True)
-        points = torch.tensor(points).contiguous().to(device='cuda:0')
+            self.deterministic)
+
         voxels, coors, num_points_per_voxel = hard_voxelization.forward(points)
         voxels_tensor.getDataNode().setData(voxels.cpu().numpy())
         coors_tensor.getDataNode().setData(coors.cpu().numpy())
         num_points_per_voxel_tensor.getDataNode().setData(num_points_per_voxel.cpu().numpy())
+        voxel_num = torch.tensor([num_points_per_voxel.size(0)])
+        voxel_num_tensor.getDataNode().setData(voxel_num.numpy())
 
 @registerProtoWriter('voxelization')
 class OpTensorProtoWriter(MluOpProtoWriter):
@@ -58,3 +61,4 @@ class OpTensorProtoWriter(MluOpProtoWriter):
         param_node.max_points = self.op_params_.get("max_points", 35)
         param_node.max_voxels = self.op_params_.get("max_voxels", 20000)
         param_node.NDim = self.op_params_.get("NDim", 3)
+        param_node.deterministic = self.op_params_.get("deterministic", True)
