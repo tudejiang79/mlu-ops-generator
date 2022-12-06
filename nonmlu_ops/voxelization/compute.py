@@ -26,6 +26,7 @@ class VoxelizationTensorList(TensorList):
                 else:
                     RandomData(input_tensor).random()
 
+@registerOp('voxelization')
 class VoxelizationOp(OpTest):
     def __init__(self, tensor_list, params):
         print(torch.__version__)
