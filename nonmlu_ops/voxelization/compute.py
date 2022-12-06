@@ -38,7 +38,7 @@ class VoxelizationOp(OpTest):
         self.num_features = self.points_shape_[1]
         self.max_points = self.params_.get("max_points", 35)
         self.max_voxels = self.params_.get("max_voxels", 20000)
-        self.NDim = self.params_.get("ndim", 3)
+        self.ndim = self.params_.get("ndim", 3)
         self.deterministic = self.params_.get("deterministic", True)
 
     def computeOutputShape(self):
@@ -86,5 +86,5 @@ class OpTensorProtoWriter(MluOpProtoWriter):
         param_node = self.proto_node_.voxelization_param
         param_node.max_points = self.op_params_.get("max_points", 35)
         param_node.max_voxels = self.op_params_.get("max_voxels", 20000)
-        param_node.NDim = self.op_params_.get("ndim", 3)
+        param_node.ndim = self.op_params_.get("ndim", 3)
         param_node.deterministic = self.op_params_.get("deterministic", True)
