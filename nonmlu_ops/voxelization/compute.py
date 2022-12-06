@@ -5,19 +5,27 @@ from mmcv.ops import Voxelization
 
 @registerTensorList('voxelization')
 class VoxelizationTensorList(TensorList):
-    def random_generate(self, tensor_, tensor_idx, *args, **kwargs):
-        if tensor_idx == 0:
-            return super().random_generate(tensor_, tensor_idx, *args, **kwargs)
-        elif tensor_idx == 1:
-            return super().random_generate(tensor_, tensor_idx, *args, **kwargs)
-        elif tensor_idx == 2:
-            coors_range = tensor_.getDataNode().getData()
-            while (coors_range[0] >= coors_range[3]) or (coors_range[1] >= coors_range[4]) or (coors_range[2] >= coors_range[5]):
-                coors_range = tensor_.getDataNode().getData()
-                super().random_generate(tensor_, tensor_idx, *args, **kwargs)
-    # pass
+    def generateData(self):
+        for idx_name, input_tensor in enumerate(self.input_tensors_):
+            if input_tensor.filename_:
+                shape = input_tensor.shape_
+                dtype = input_tensor.getDataType()
+                assert not dtype.isComplex(
+                ), 'complex type do not support generate data from file'
+                dtype_str = dtype.getNumpyStr()
+                file_data = np.genfromtxt(input_tensor.filename_,
+                                          dtype=dtype_str).reshape(shape)
+                input_tensor.getDataNode().setData(file_data)
+            else:
+                if idx_name == 2:
+                    while 1:
+                        RandomData(input_tensor).random()
+                        coors_range = input_tensor.getDataNode().getData()
+                        if (coors_range[0] < coors_range[3]) and (coors_range[1] < coors_range[4]) and (coors_range[2] < coors_range[5]):
+                            break
+                else:
+                    RandomData(input_tensor).random()
 
-@registerOp('voxelization')
 class VoxelizationOp(OpTest):
     def __init__(self, tensor_list, params):
         print(torch.__version__)
@@ -57,15 +65,16 @@ class VoxelizationOp(OpTest):
             self.max_voxels,
             self.deterministic)
 
-        voxels_cut, coors_cut, num_points_per_voxel_cut = hard_voxelization.forward(points)
-        voxel_num = torch.tensor([num_points_per_voxel_cut.size(0)])
-        voxel_num_tensor.getDataNode().setData(voxel_num.numpy())
-        voxels = points.new_zeros(size=(self.max_voxels, self.max_points, self.num_features))
-        coors = points.new_zeros(size=(self.max_voxels, 3), dtype=torch.int)
-        num_points_per_voxel = points.new_zeros(size=(self.max_voxels, ), dtype=torch.int)
-        voxels = voxels + voxels_cut
-        coors = coors + coors_cut
-        num_points_per_voxel = num_points_per_voxel + num_points_per_voxel_cut
+        voxels, coors, num_points_per_voxel = hard_voxelization.forward(points)
+        voxel_num = num_points_per_voxel.size(0)
+        voxel_num_tensor.getDataNode().setData(torch.tensor([voxel_num]).numpy())
+        if voxel_num < self.max_voxels :
+            temp = points.new_zeros(size=(self.max_voxels - voxel_num, self.max_points, self.num_features))
+            voxels = torch.cat((voxels, temp), 0)
+            temp = points.new_zeros(size=(self.max_voxels - voxel_num, 3), dtype=torch.int)
+            coors = torch.cat((coors, temp), 0)
+            temp = points.new_zeros(size=(self.max_voxels - voxel_num, ), dtype=torch.int)
+            num_points_per_voxel = torch.cat((num_points_per_voxel, temp), 0)
         voxels_tensor.getDataNode().setData(voxels.cpu().numpy())
         coors_tensor.getDataNode().setData(coors.cpu().numpy())
         num_points_per_voxel_tensor.getDataNode().setData(num_points_per_voxel.cpu().numpy())

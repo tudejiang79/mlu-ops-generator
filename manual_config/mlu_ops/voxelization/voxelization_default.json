@@ -8,7 +8,7 @@
     {
       "inputs":[
         {"shape":[253999, 5],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-11, 11]}},
-        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[1, 2]}},
+        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[0.1, 0.2]}},
         {"shape":[6],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-10, 10]}}],
       "outputs":[
         {"shape":[30000, 20, 5],"dtype":"float32","layout":"ARRAY"},
