@@ -5,7 +5,17 @@ from mmcv.ops import Voxelization
 
 @registerTensorList('voxelization')
 class VoxelizationTensorList(TensorList):
-    pass
+    def random_generate(self, tensor_, tensor_idx, *args, **kwargs):
+        if tensor_idx == 0:
+            return super().random_generate(tensor_, tensor_idx, *args, **kwargs)
+        elif tensor_idx == 1:
+            return super().random_generate(tensor_, tensor_idx, *args, **kwargs)
+        elif tensor_idx == 2:
+            coors_range = tensor_.getDataNode().getData()
+            while (coors_range[0] >= coors_range[3]) or (coors_range[1] >= coors_range[4]) or (coors_range[2] >= coors_range[5]):
+                coors_range = tensor_.getDataNode().getData()
+                super().random_generate(tensor_, tensor_idx, *args, **kwargs)
+    # pass
 
 @registerOp('voxelization')
 class VoxelizationOp(OpTest):
@@ -19,7 +29,7 @@ class VoxelizationOp(OpTest):
         self.num_features = self.points_shape_[1]
         self.max_points = self.params_.get("max_points", 35)
         self.max_voxels = self.params_.get("max_voxels", 20000)
-        self.NDim = self.params_.get("NDim", 3)
+        self.NDim = self.params_.get("ndim", 3)
         self.deterministic = self.params_.get("deterministic", True)
 
     def computeOutputShape(self):
@@ -47,12 +57,18 @@ class VoxelizationOp(OpTest):
             self.max_voxels,
             self.deterministic)
 
-        voxels, coors, num_points_per_voxel = hard_voxelization.forward(points)
+        voxels_cut, coors_cut, num_points_per_voxel_cut = hard_voxelization.forward(points)
+        voxel_num = torch.tensor([num_points_per_voxel_cut.size(0)])
+        voxel_num_tensor.getDataNode().setData(voxel_num.numpy())
+        voxels = points.new_zeros(size=(self.max_voxels, self.max_points, self.num_features))
+        coors = points.new_zeros(size=(self.max_voxels, 3), dtype=torch.int)
+        num_points_per_voxel = points.new_zeros(size=(self.max_voxels, ), dtype=torch.int)
+        voxels = voxels + voxels_cut
+        coors = coors + coors_cut
+        num_points_per_voxel = num_points_per_voxel + num_points_per_voxel_cut
         voxels_tensor.getDataNode().setData(voxels.cpu().numpy())
         coors_tensor.getDataNode().setData(coors.cpu().numpy())
         num_points_per_voxel_tensor.getDataNode().setData(num_points_per_voxel.cpu().numpy())
-        voxel_num = torch.tensor([num_points_per_voxel.size(0)])
-        voxel_num_tensor.getDataNode().setData(voxel_num.numpy())
 
 @registerProtoWriter('voxelization')
 class OpTensorProtoWriter(MluOpProtoWriter):
@@ -60,5 +76,5 @@ class OpTensorProtoWriter(MluOpProtoWriter):
         param_node = self.proto_node_.voxelization_param
         param_node.max_points = self.op_params_.get("max_points", 35)
         param_node.max_voxels = self.op_params_.get("max_voxels", 20000)
-        param_node.NDim = self.op_params_.get("NDim", 3)
+        param_node.NDim = self.op_params_.get("ndim", 3)
         param_node.deterministic = self.op_params_.get("deterministic", True)

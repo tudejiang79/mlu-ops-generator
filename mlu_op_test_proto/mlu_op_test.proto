@@ -298,6 +298,6 @@ message BallQueryParam  {
 message VoxelizationParam {
   optional int32 max_points = 1 [default = 35];
   optional int32 max_voxels = 2 [default = 20000];
-  optional int32 NDim       = 3 [default = 3];
+  optional int32 ndim       = 3 [default = 3];
   optional bool deterministic = 4 [default = true];
 }
