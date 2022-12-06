@@ -82,5 +82,49 @@
         {"shape":[534],"dtype":"int32","layout":"ARRAY"},
         {"shape":[1],"dtype":"int32","layout":"ARRAY"}],
       "op_params": {"max_points": 24, "max_voxels": 534, "ndim": 3, "deterministic": true}
+    },{
+      "inputs":[
+        {"shape":[87, 750921],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[63, 565]}},
+        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[6, 9]}},
+        {"shape":[6],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-255, 464]}}],
+      "outputs":[
+        {"shape":[25, 7, 750921],"dtype":"float32","layout":"ARRAY"},
+        {"shape":[25, 3],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[25],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[1],"dtype":"int32","layout":"ARRAY"}],
+      "op_params": {"max_points": 7, "max_voxels": 25, "ndim": 3, "deterministic": true}
+    },{
+      "inputs":[
+        {"shape":[70931, 39],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-94, 88]}},
+        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[5, 5]}},
+        {"shape":[6],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-96, 40]}}],
+      "outputs":[
+        {"shape":[405, 48, 39],"dtype":"float32","layout":"ARRAY"},
+        {"shape":[405, 3],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[405],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[1],"dtype":"int32","layout":"ARRAY"}],
+      "op_params": {"max_points": 48, "max_voxels": 405, "ndim": 3, "deterministic": true}
+    },{
+      "inputs":[
+        {"shape":[70931, 39],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-94, 88]}},
+        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[5, 5]}},
+        {"shape":[6],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-96, 40]}}],
+      "outputs":[
+        {"shape":[405, 48, 39],"dtype":"float32","layout":"ARRAY"},
+        {"shape":[405, 3],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[405],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[1],"dtype":"int32","layout":"ARRAY"}],
+      "op_params": {"max_points": 48, "max_voxels": 405, "ndim": 3, "deterministic": true}
+    },{
+      "inputs":[
+        {"shape":[49644, 26],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-600, -52]}},
+        {"shape":[3],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[2, 19]}},
+        {"shape":[6],"dtype":"float32","layout":"ARRAY","random_distribution":{"uniform":[-696, 389]}}],
+      "outputs":[
+        {"shape":[6028, 93, 26],"dtype":"float32","layout":"ARRAY"},
+        {"shape":[6028, 3],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[6028],"dtype":"int32","layout":"ARRAY"},
+        {"shape":[1],"dtype":"int32","layout":"ARRAY"}],
+      "op_params": {"max_points": 93, "max_voxels": 6028, "ndim": 3, "deterministic": true}
     }]
 }
